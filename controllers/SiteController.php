@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\UploadForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -9,6 +10,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -61,7 +63,38 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('logomaker');
+
+        $model = new UploadForm();
+
+        $vectors = scandir('vectors');
+        $cleanVectors = [];
+        foreach($vectors as $vector){
+            if($vector == '.' || $vector == '..'){
+
+            }else{
+                $cleanVectors[] = $vector;
+            }
+        }
+
+//        var_dump($cleanVectors);exit;
+
+        if (Yii::$app->request->isPost) {
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            if ($model->upload()) {
+//                if ($model->load(Yii::$app->request->post()) && $model->login()) {
+                    return $this->redirect('http://oc-expert.info/oc-expert.info/vmosnak/web/');
+//                }
+            }
+        }
+
+        return $this->render('logomaker',
+            [
+                'model'     => $model,
+                'vectos'    => $cleanVectors
+            ]
+        );
+
+//        return $this->render('logomaker');
     }
 
     /**
